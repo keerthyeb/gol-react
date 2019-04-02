@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "%20//keerthyeb.github.io/gol-react/precache-manifest.02fdd94bc5d5470876125abe98d580ce.js"
+  "/gol-react/precache-manifest.bb66573fed5080e67629bbfd93d3c389.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("%20//keerthyeb.github.io/gol-react/index.html", {
+workbox.routing.registerNavigationRoute("/gol-react/index.html", {
   
   blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
 });
