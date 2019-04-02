@@ -1,64 +1,79 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import * as serviceWorker from "./serviceWorker";
 import NextGeneration from "./gameOfLife";
-
-function CreateTable() {
-  let RenderTable = () => {
-    let table = [];
-    for (let i = 0; i < 10; i++) {
-      let children = [];
-      for (let j = 0; j < 10; j++) {
-        children.push(
-          <td className="column" key={i + `_` + j} id={i + `_` + j} />
-        );
-      }
-      table.push(<tr>{children}</tr>);
-    }
-    return table;
-  };
-  return <table>{RenderTable()}</table>;
-}
 
 class GameOfLife extends React.Component {
   constructor(props) {
     super(props);
     this.updateCell = this.updateCell.bind(this);
-    let currentGeneration = [[0, 1], [1, 1], [2, 1]];
-    let bounds = { topLeft: [0, 0], bottomRight: [10, 10] };
-    this.state = {
-      bounds: bounds,
-      currentGeneration: currentGeneration,
-      nextGeneration: NextGeneration(currentGeneration, bounds)
-    };
+    this.initializeAliveCell = this.initializeAliveCell.bind(this);
+    this.startGame = this.startGame.bind(this);
+
+    this.bounds = { topLeft: [0, 0], bottomRight: [15, 15] };
+    this.state = { aliveCells: [] };
   }
 
-  componentDidMount() {
+  startGame() {
     setInterval(this.updateCell, 1000);
   }
 
+  RenderTable = () => {
+    let table = [];
+    for (let row = 0; row < 15; row++) {
+      let children = [];
+      this.createRow(children, row);
+      table.push(<tr key={row}>{children}</tr>);
+    }
+    return table;
+  };
+
+  createRow(children, row) {
+    for (let column = 0; column < 15; column++) {
+      children.push(
+        <td
+          className="column"
+          key={row + `_` + column}
+          id={row + `_` + column}
+          onClick={this.initializeAliveCell}
+        />
+      );
+    }
+  }
+
+  initializeAliveCell(event) {
+    let id = event.target.id.split("_");
+    document.getElementById(event.target.id).className = "aliveCell";
+    let aliveCells = this.state.aliveCells;
+    aliveCells.push(id);
+    this.setState({
+      aliveCells
+    });
+  }
+
   updateCell() {
-    this.state.currentGeneration.map(cell => {
+    this.state.aliveCells.map(cell => {
       document.getElementById(cell[0] + `_` + cell[1]).className = "column";
     });
-    let nextgeneration = this.state.nextGeneration;
+    let nextgeneration = NextGeneration(this.state.aliveCells, this.bounds);
     nextgeneration.map(cell => {
       document.getElementById(cell[0] + `_` + cell[1]).className = "aliveCell";
     });
     this.setState({
-      currentGeneration: this.state.nextGeneration,
-      nextGeneration: NextGeneration(
-        this.state.nextGeneration,
-        this.state.bounds
-      )
+      aliveCells: nextgeneration
     });
   }
 
   render() {
-    return <CreateTable />;
+    return (
+      <div>
+        <table>
+          <tbody>{this.RenderTable()}</tbody>
+        </table>
+        <button onClick={this.startGame}>Start</button>
+      </div>
+    );
   }
 }
 
 ReactDOM.render(<GameOfLife />, document.getElementById("root"));
-serviceWorker.unregister();
